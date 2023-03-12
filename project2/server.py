@@ -3,6 +3,7 @@ import datetime
 import logging
 import configparser
 from w1thermsensor import W1ThermSensor
+from smbus import SMBus
 
 import asyncio
 
@@ -24,29 +25,33 @@ class HelloResource(resource.Resource):
 class TempResource(resource.Resource):
     def __init__(self):
         super().__init__()
-    #     self.handle = None
-
-    # def reschedule(self):
-    #     self.handle = asyncio.get_event_loop().call_later(5, self.notify)
-
-    # def update_observation_count(self, count):
-    #     if count and self.handle is None:
-    #         print("Starting the clock")
-    #         self.reschedule()
-    #     if count == 0 and self.handle:
-    #         self.handle.cancel()
-    #         self.handle = None
 
     def get_temp(self):
         sensor = W1ThermSensor()
         currentTemp = sensor.get_temperature()
         message = "Current Temperature:" + str(format(currentTemp, '.1f')) + " C"
-        self.currentTemp = bytes(message, 'utf-8')
+        self.content = bytes(message, 'utf-8')
 
     async def render_get(self, request):
         self.get_temp()
-        return aiocoap.Message(payload=self.currentTemp)
+        return aiocoap.Message(payload=self.content)
+    
+class LightSensorResource(resource.Resource):
+    def __init__(self):
+        super().__init__()
+        self.bus = SMBus(1)
+        self.adc = 0x4b
+        self.ldr = 0x84
 
+    def get_light(self):
+        self.bus.write_byte(self.adc, self.ldr)
+        result = self.bus.read_byte(self.adc) / 255 * 3.3
+        message = "Light Voltage: " + str(format(result, '.2f')) + " V"
+        self.content = bytes(message, 'utf-8')
+    
+    async def render_get(self, request):
+        self.get_light()
+        return aiocoap.Message(payload=self.content)
 
 # logging setup
 
@@ -80,6 +85,7 @@ async def main():
             resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(['hello'], HelloResource())
     root.add_resource(['temp'], TempResource())
+    root.add_resource(['light'], LightSensorResource())
 
     host = read_config(config_ini="config.ini")
 
