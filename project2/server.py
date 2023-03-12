@@ -24,15 +24,27 @@ class HelloResource(resource.Resource):
 class TempResource(resource.Resource):
     def __init__(self):
         super().__init__()
-        self.get_temp()
+    #     self.handle = None
+
+    # def reschedule(self):
+    #     self.handle = asyncio.get_event_loop().call_later(5, self.notify)
+
+    # def update_observation_count(self, count):
+    #     if count and self.handle is None:
+    #         print("Starting the clock")
+    #         self.reschedule()
+    #     if count == 0 and self.handle:
+    #         self.handle.cancel()
+    #         self.handle = None
 
     def get_temp(self):
         sensor = W1ThermSensor()
         currentTemp = sensor.get_temperature()
-        print("Current Temperature is %s C" %currentTemp)
-        self.currentTemp = bytes(str(currentTemp), 'utf-8')
+        message = "Current Temperature:" + str(format(currentTemp, '.1f')) + " C"
+        self.currentTemp = bytes(message, 'utf-8')
 
     async def render_get(self, request):
+        self.get_temp()
         return aiocoap.Message(payload=self.currentTemp)
 
 
@@ -68,10 +80,6 @@ async def main():
             resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(['hello'], HelloResource())
     root.add_resource(['temp'], TempResource())
-    # root.add_resource(['time'], TimeResource())
-    # root.add_resource(['other', 'block'], BlockResource())
-    # root.add_resource(['other', 'separate'], SeparateLargeResource())
-    # root.add_resource(['whoami'], WhoAmI())
 
     host = read_config(config_ini="config.ini")
 
