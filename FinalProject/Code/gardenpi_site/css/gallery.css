@@ -1,0 +1,98 @@
+/*
+TITLE: 		gallery.css
+AUTHOR:		Austin Sands
+CREATED ON:	04/13/2023
+PURPOSE:	Style sheet for gardenpi gallery page
+ */
+
+*{
+    margin:0 0 6px;
+}
+
+html, body {
+    background-color: #438947;
+}
+
+.flex-container {
+	display: flex;
+    flex-wrap: wrap;
+	justify-content: center;
+}
+
+.flex-container > div:not(.pagination){
+    width: 40%;
+    margin: 15px;
+    padding: 15px;
+    text-align: center;
+    line-height: 2vw;
+    font-size: 2vw;
+}
+
+div:not(.flex-container, #header) {
+    background-color: #e8d49b;
+    border-radius: 15px;
+}
+
+.pagination {
+    width: 90%;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    line-height: 1.5vw;
+    font-size: 1.5vw;
+}
+
+img {
+    object-fit: cover;
+    max-width: 100%;
+}
+
+h1 {
+    text-align: center;
+}
+
+#header {
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    font-size: 4vw;
+    color: white;
+    background: #0f2c11;
+}
+
+#nav-bar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #0f2c11;
+}
+
+#nav-bar li {
+    margin: 0;
+    float: left;
+}
+
+#nav-bar li a {
+    margin: 0;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 10px 10px;
+    text-decoration: none;
+}
+
+#nav-bar li a:hover:not(.active) {
+    background-color: #050f06;
+}
+
+#nav-bar li a.active {
+    background-color: #3ac241;
+}
+
+
+@media only screen and (max-width: 600px) {
+    #nav-bar li {
+        float: none;
+    }
+}
