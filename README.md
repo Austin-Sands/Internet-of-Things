@@ -1,3 +1,3 @@
-# CSCI-43300
-Coursework for CSCI 43300. 
+# Internet of Things
+Coursework for Internet of Things. 
 Prompts for the projects are in each project folder
